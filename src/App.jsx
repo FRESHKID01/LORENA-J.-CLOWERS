@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BookOpen, Star, Send, Menu, X, ArrowRight, 
   Check, ChevronRight, ExternalLink, Search, ChevronDown, CheckCircle2, Loader2
@@ -12,8 +13,7 @@ export default function App() {
   const [searchTarget, setSearchTarget] = useState('amazon');
   const [openFaq, setOpenFaq] = useState(null);
   
-  // Form state for professional AJAX handling
-  const [formStatus, setFormStatus] = useState('idle'); // 'idle' | 'submitting' | 'success' | 'error'
+  const [formStatus, setFormStatus] = useState('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
     name: '',
@@ -33,7 +33,6 @@ export default function App() {
     window.open(url, '_blank');
   };
 
-  // Professional AJAX Form submission handler (stays on your page, no redirect)
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setFormStatus('submitting');
@@ -126,10 +125,16 @@ export default function App() {
     <div className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A] font-sans antialiased selection:bg-[#D4AF37] selection:text-white overflow-x-hidden">
       
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#FDFBF7]/90 backdrop-blur-md border-b border-black/5">
+      <motion.nav 
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="fixed top-0 left-0 right-0 z-50 bg-[#FDFBF7]/90 backdrop-blur-md border-b border-black/5"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-          <a href="#home" className="flex items-center gap-2 sm:gap-3">
-            <img 
+          <a href="#home" className="flex items-center gap-2 sm:gap-3 group">
+            <motion.img 
+              whileHover={{ scale: 1.08, rotate: 5 }}
               src={logoImg} 
               alt="Lorena J. Clowers Logo" 
               className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border border-[#D4AF37]/50 shadow-sm shrink-0"
@@ -144,7 +149,14 @@ export default function App() {
             <a href="#finder" className="hover:text-[#D4AF37] transition-colors">Book Finder</a>
             <a href="#testimonials" className="hover:text-[#D4AF37] transition-colors">Testimonials</a>
             <a href="#faq" className="hover:text-[#D4AF37] transition-colors">FAQ</a>
-            <a href="#contact" className="px-5 py-2.5 rounded-full bg-[#070B19] text-[#D4AF37] font-bold hover:bg-black transition-all">Start Your Note</a>
+            <motion.a 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              href="#contact" 
+              className="px-5 py-2.5 rounded-full bg-[#070B19] text-[#D4AF37] font-bold hover:bg-black transition-all shadow-md"
+            >
+              Start Your Note
+            </motion.a>
           </div>
 
           <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-[#070B19] p-2 focus:outline-none">
@@ -153,79 +165,147 @@ export default function App() {
         </div>
 
         {/* Mobile Dropdown Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-[#FDFBF7] border-b border-black/5 px-6 py-6 flex flex-col gap-4 text-gray-800 font-medium shadow-xl">
-            <a href="#about" onClick={() => setIsMenuOpen(false)} className="py-1">About</a>
-            <a href="#process" onClick={() => setIsMenuOpen(false)} className="py-1">Process</a>
-            <a href="#packages" onClick={() => setIsMenuOpen(false)} className="py-1">Services</a>
-            <a href="#finder" onClick={() => setIsMenuOpen(false)} className="py-1">Book Finder</a>
-            <a href="#testimonials" onClick={() => setIsMenuOpen(false)} className="py-1">Testimonials</a>
-            <a href="#faq" onClick={() => setIsMenuOpen(false)} className="py-1">FAQ</a>
-            <a href="#contact" onClick={() => setIsMenuOpen(false)} className="py-2.5 text-center rounded-full bg-[#070B19] text-[#D4AF37] font-bold">Start Your Note</a>
-          </div>
-        )}
-      </nav>
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-[#FDFBF7] border-b border-black/5 px-6 py-6 flex flex-col gap-4 text-gray-800 font-medium shadow-xl overflow-hidden"
+            >
+              <a href="#about" onClick={() => setIsMenuOpen(false)} className="py-1">About</a>
+              <a href="#process" onClick={() => setIsMenuOpen(false)} className="py-1">Process</a>
+              <a href="#packages" onClick={() => setIsMenuOpen(false)} className="py-1">Services</a>
+              <a href="#finder" onClick={() => setIsMenuOpen(false)} className="py-1">Book Finder</a>
+              <a href="#testimonials" onClick={() => setIsMenuOpen(false)} className="py-1">Testimonials</a>
+              <a href="#faq" onClick={() => setIsMenuOpen(false)} className="py-1">FAQ</a>
+              <a href="#contact" onClick={() => setIsMenuOpen(false)} className="py-2.5 text-center rounded-full bg-[#070B19] text-[#D4AF37] font-bold">Start Your Note</a>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
 
-      {/* HERO SECTION */}
+      {/* HERO SECTION WITH 3D BOOK BACK-COVER MOCKUP */}
       <section id="home" className="pt-32 sm:pt-36 pb-16 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto border-b border-black/5">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
-          <div>
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
             <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-bold mb-3 sm:mb-4 block">Professional Book Marketing & Full Services</span>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-normal leading-tight mb-6">
               From an early manuscript to a book already on sale, I'll help identify what needs attention now and build a practical path toward publication, reader discovery, and sustainable sales.
             </h1>
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
-              <a href="#contact" className="px-6 py-3.5 rounded-full bg-[#1A8754] text-white font-medium hover:bg-[#156d44] transition-all flex items-center justify-center gap-2 text-center">
+              <motion.a 
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                href="#contact" 
+                className="px-6 py-3.5 rounded-full bg-[#1A8754] text-white font-medium hover:bg-[#156d44] transition-all flex items-center justify-center gap-2 text-center shadow-lg"
+              >
                 Tell me about your book <ArrowRight className="w-4 h-4" />
-              </a>
-              <a href="#finder" className="px-6 py-3.5 rounded-full border border-black/20 text-gray-800 font-medium hover:bg-black/5 transition-all flex items-center justify-center gap-2 text-center">
+              </motion.a>
+              <motion.a 
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                href="#finder" 
+                className="px-6 py-3.5 rounded-full border border-black/20 text-gray-800 font-medium hover:bg-black/5 transition-all flex items-center justify-center gap-2 text-center"
+              >
                 Explore the work <ChevronRight className="w-4 h-4 text-[#1A8754]" />
-              </a>
+              </motion.a>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="flex justify-center w-full">
-            <div className="relative w-full max-w-md rounded-2xl bg-[#070B19] p-6 sm:p-8 text-white shadow-2xl border border-[#D4AF37]/30 flex flex-col items-center text-center">
-              <div className="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-[#D4AF37] to-amber-200 shadow-lg mb-4">
+          {/* 3D Interactive Book Mockup (Back Cover Design) */}
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+            className="flex justify-center w-full perspective-1000 py-6"
+          >
+            <motion.div 
+              whileHover={{ rotateY: -6, rotateX: 4, scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 200, damping: 20 }}
+              className="relative w-full max-w-md rounded-r-2xl rounded-l-md bg-[#070B19] p-7 sm:p-9 text-white shadow-[0_25px_60px_-15px_rgba(7,11,25,0.7)] border-y border-r border-[#D4AF37]/40 flex flex-col items-center text-center transform-style-3d cursor-pointer"
+              style={{
+                boxShadow: "-12px 0 25px -5px rgba(0,0,0,0.4), 0 25px 50px -12px rgba(7,11,25,0.8)"
+              }}
+            >
+              {/* Realistic Book Spine Edge Shadow on the Left */}
+              <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-black/80 to-transparent rounded-l-md pointer-events-none" />
+
+              <motion.div 
+                whileHover={{ scale: 1.06, rotate: 3 }}
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-[#D4AF37] to-amber-200 shadow-xl mb-4"
+              >
                 <img 
                   src={logoImg} 
                   alt="Lorena J. Clowers Logo" 
                   className="w-full h-full rounded-full object-cover border-2 border-[#070B19]"
                 />
+              </motion.div>
+
+              <h3 className="font-serif font-bold text-xl mb-1 tracking-wide">Lorena J. Clowers</h3>
+              <p className="text-[11px] text-[#D4AF37] uppercase tracking-widest font-semibold mb-4">Bestseller Strategist & Marketer</p>
+              
+              <div className="relative px-2 py-1 my-1">
+                <span className="absolute -top-3 -left-2 text-3xl text-[#D4AF37]/30 font-serif">“</span>
+                <p className="text-gray-300 text-xs sm:text-sm italic mb-6 leading-relaxed relative z-10">
+                  "Marketing can feel like one more job after the hardest one. It gets easier when the plan starts with your book, your readers, and your real capacity."
+                </p>
+                <span className="absolute -bottom-6 -right-2 text-3xl text-[#D4AF37]/30 font-serif">”</span>
               </div>
-              <h3 className="font-serif font-bold text-xl mb-1">Lorena J. Clowers</h3>
-              <p className="text-xs text-[#D4AF37] uppercase tracking-widest mb-4">Bestseller Strategist & Marketer</p>
-              <p className="text-gray-300 text-sm sm:text-base italic mb-6 leading-relaxed">
-                "Marketing can feel like one more job after the hardest one. It gets easier when the plan starts with your book, your readers, and your real capacity."
-              </p>
-              <div className="w-full pt-4 border-t border-white/10 flex flex-wrap justify-between items-center text-xs text-gray-400 gap-2">
-                <span>7 Years Experience</span>
+
+              <div className="w-full pt-4 border-t border-white/15 flex flex-wrap justify-between items-center text-xs text-gray-400 gap-2">
+                <span className="font-mono text-[11px]">7 Years Experience</span>
                 <span className="text-[#1A8754] font-semibold flex items-center gap-1"><Check className="w-3.5 h-3.5" /> Amazon Verified</span>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* EDITORIAL QUOTE BANNER */}
-      <section className="py-12 sm:py-16 bg-[#F4EFE6] border-b border-black/5 px-4 sm:px-6 text-center">
-        <p className="text-xs uppercase tracking-widest text-[#1A8754] font-bold mb-3">A Note For Authors</p>
-        <h2 className="text-xl sm:text-2xl md:text-4xl font-serif max-w-3xl mx-auto leading-relaxed">
-          Marketing can feel like one more job after the hardest one. It gets easier when the plan starts with <span className="text-[#1A8754] italic">your book</span>, <span className="text-[#1A8754] italic">your readers</span>, and <span className="text-[#1A8754] italic">your real capacity</span>.
-        </h2>
+      <section className="py-12 sm:py-16 bg-[#F4EFE6] border-b border-black/5 px-4 sm:px-6 text-center overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.5 }}
+        >
+          <p className="text-xs uppercase tracking-widest text-[#1A8754] font-bold mb-3">A Note For Authors</p>
+          <h2 className="text-xl sm:text-2xl md:text-4xl font-serif max-w-3xl mx-auto leading-relaxed">
+            Marketing can feel like one more job after the hardest one. It gets easier when the plan starts with <span className="text-[#1A8754] italic">your book</span>, <span className="text-[#1A8754] italic">your readers</span>, and <span className="text-[#1A8754] italic">your real capacity</span>.
+          </h2>
+        </motion.div>
       </section>
 
       {/* PROCESS / WORK MADE SPECIFIC SECTION */}
       <section id="process" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 border-b border-black/5">
-        <div className="mb-12 sm:mb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.4 }}
+          className="mb-12 sm:mb-16"
+        >
           <span className="text-xs uppercase tracking-widest text-gray-500 font-semibold">The Work, Made Specific</span>
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif mt-2">From first draft to long-term discovery.</h2>
-        </div>
+        </motion.div>
 
-        <div className="space-y-10 sm:space-y-12">
-          {stages.map((stg) => (
-            <div key={stg.num} className="grid md:grid-cols-12 gap-4 sm:gap-6 pb-10 sm:pb-12 border-b border-black/10 items-start">
-              <div className="md:col-span-1 text-xl sm:text-2xl font-serif text-[#1A8754] font-semibold">{stg.num}</div>
+        <div className="space-y-6 sm:space-y-8">
+          {stages.map((stg, index) => (
+            <motion.div 
+              key={stg.num} 
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: index * 0.08, ease: "easeOut" }}
+              whileHover={{ scale: 1.01, backgroundColor: 'rgba(0,0,0,0.015)' }}
+              className="grid md:grid-cols-12 gap-4 sm:gap-6 p-6 rounded-2xl border border-black/5 bg-white shadow-sm items-center transition-all"
+            >
+              <div className="md:col-span-1 text-2xl sm:text-3xl font-serif text-[#1A8754] font-bold">{stg.num}</div>
               <div className="md:col-span-7">
                 <h3 className="text-xl sm:text-2xl font-serif font-bold mb-2 sm:mb-3">{stg.title}</h3>
                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{stg.desc}</p>
@@ -237,7 +317,7 @@ export default function App() {
                   </span>
                 ))}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
         <p className="mt-8 text-xs sm:text-sm text-gray-500 italic leading-relaxed">
@@ -248,7 +328,13 @@ export default function App() {
       {/* ABOUT BEHIND THE WORK */}
       <section id="about" className="py-16 sm:py-24 bg-[#F4EFE6]/50 border-b border-black/5 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto grid md:grid-cols-12 gap-10 sm:gap-12 items-center">
-          <div className="md:col-span-5 bg-[#070B19] text-white p-6 sm:p-8 rounded-2xl shadow-xl border border-[#D4AF37]/30 text-center flex flex-col items-center">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.92 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+            className="md:col-span-5 bg-[#070B19] text-white p-6 sm:p-8 rounded-2xl shadow-xl border border-[#D4AF37]/30 text-center flex flex-col items-center"
+          >
             <div className="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-[#D4AF37] to-amber-200 shadow-lg mb-4">
               <img 
                 src={logoImg} 
@@ -258,8 +344,14 @@ export default function App() {
             </div>
             <h3 className="text-lg sm:text-xl font-serif font-bold">LORENA J. CLOWERS</h3>
             <p className="text-xs text-[#D4AF37] uppercase tracking-widest mt-1">Book Marketing Specialist</p>
-          </div>
-          <div className="md:col-span-7">
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, x: 25 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+            className="md:col-span-7"
+          >
             <span className="text-xs uppercase tracking-widest text-gray-500 font-semibold">A Little About The Person Behind The Work</span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif mt-2 mb-4 sm:mb-6">I'm Lorena J. Clowers.</h2>
             <p className="text-gray-700 text-sm sm:text-base leading-relaxed mb-4 sm:mb-6">
@@ -268,23 +360,34 @@ export default function App() {
             <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
               I can support you from manuscript direction and editorial priorities through positioning and publication preparation—then into launch, reader discovery, and the practical work that helps books keep finding readers.
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* WAYS TO WORK TOGETHER (PACKAGES / QUOTES) */}
       <section id="packages" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 border-b border-black/5">
-        <div className="text-center mb-12 sm:mb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.4 }}
+          className="text-center mb-12 sm:mb-16"
+        >
           <span className="text-xs uppercase tracking-widest text-[#1A8754] font-bold">Ways To Work Together</span>
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif mt-2">A useful starting point. A scope built around you.</h2>
           <p className="text-gray-600 text-sm sm:text-base mt-3 max-w-2xl mx-auto">These are focused starting points, not the full-service menu. I can also begin with manuscript direction or publication preparation and shape the scope around your book and priorities.</p>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
-          {packages.map((pkg) => (
-            <div 
+          {packages.map((pkg, index) => (
+            <motion.div 
               key={pkg.id} 
-              className={`rounded-2xl p-6 sm:p-8 flex flex-col justify-between border ${pkg.popular ? 'bg-[#070B19] text-white border-[#D4AF37] shadow-2xl md:scale-105' : 'bg-white text-[#1A1A1A] border-black/10'}`}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: index * 0.1, ease: "easeOut" }}
+              whileHover={{ y: -8 }}
+              className={`rounded-2xl p-6 sm:p-8 flex flex-col justify-between border transition-shadow ${pkg.popular ? 'bg-[#070B19] text-white border-[#D4AF37] shadow-2xl md:scale-105' : 'bg-white text-[#1A1A1A] border-black/10 shadow-sm'}`}
             >
               <div>
                 <span className={`text-xs font-bold uppercase tracking-widest ${pkg.popular ? 'text-[#D4AF37]' : 'text-gray-500'}`}>{pkg.subtitle}</span>
@@ -301,32 +404,48 @@ export default function App() {
                 </ul>
               </div>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => handlePackageSelect(pkg.name)}
-                className={`w-full py-3.5 rounded-full font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                className={`w-full py-3.5 rounded-full font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md ${
                   pkg.popular 
                     ? 'bg-[#D4AF37] text-[#070B19] hover:bg-[#e6c55c]' 
                     : 'bg-[#070B19] text-white hover:bg-black'
                 }`}
               >
                 Ask about this starting point <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           ))}
         </div>
       </section>
 
-      {/* TESTIMONIALS SECTION (With Professional Rating Badges) */}
+      {/* SUCCESS STORIES / TESTIMONIALS SECTION */}
       <section id="testimonials" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 border-b border-black/5 bg-[#FDFBF7]">
-        <div className="text-center mb-12 sm:mb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.4 }}
+          className="text-center mb-12 sm:mb-16"
+        >
           <span className="text-xs uppercase tracking-widest text-[#1A8754] font-bold">Success Stories</span>
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif mt-2">Trusted by Authors Worldwide</h2>
           <p className="text-gray-600 text-sm sm:text-base mt-3 max-w-xl mx-auto">Read what independent and established writers say about their publishing and marketing journey.</p>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {testimonials.map((t, idx) => (
-            <div key={idx} className="p-6 sm:p-8 rounded-2xl bg-white border border-black/10 shadow-sm flex flex-col justify-between">
+            <motion.div 
+              key={idx} 
+              initial={{ opacity: 0, y: 25, scale: 0.97 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 0.35, delay: idx * 0.06, ease: "easeOut" }}
+              whileHover={{ y: -6, boxShadow: "0 12px 30px -10px rgba(0, 0, 0, 0.1)" }}
+              className="p-6 sm:p-8 rounded-2xl bg-white border border-black/10 shadow-sm flex flex-col justify-between transition-all"
+            >
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20">
@@ -340,35 +459,56 @@ export default function App() {
                 <h4 className="font-serif font-bold text-[#070B19]">{t.name}</h4>
                 <p className="text-xs text-gray-500">{t.role}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
 
       {/* FAQ SECTION */}
       <section id="faq" className="py-16 sm:py-24 max-w-4xl mx-auto px-4 sm:px-6 border-b border-black/5">
-        <div className="text-center mb-12 sm:mb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.4 }}
+          className="text-center mb-12 sm:mb-16"
+        >
           <span className="text-xs uppercase tracking-widest text-[#1A8754] font-bold">Got Questions?</span>
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif mt-2">Frequently Asked Questions</h2>
           <p className="text-gray-600 text-sm sm:text-base mt-3">Everything you need to know about working together and our publishing process.</p>
-        </div>
+        </motion.div>
 
         <div className="space-y-4">
           {faqs.map((faq, idx) => (
-            <div key={idx} className="border border-black/10 rounded-2xl bg-white overflow-hidden transition-all">
+            <motion.div 
+              key={idx} 
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 0.3, delay: idx * 0.05 }}
+              className="border border-black/10 rounded-2xl bg-white overflow-hidden shadow-sm"
+            >
               <button 
                 onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                className="w-full px-6 py-5 text-left font-serif font-bold text-base sm:text-lg flex items-center justify-between gap-4 cursor-pointer hover:bg-black/[0.02]"
+                className="w-full px-6 py-5 text-left font-serif font-bold text-base sm:text-lg flex items-center justify-between gap-4 cursor-pointer hover:bg-black/[0.02] transition-colors"
               >
                 <span>{faq.q}</span>
-                <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${openFaq === idx ? 'rotate-180 text-[#1A8754]' : ''}`} />
+                <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${openFaq === idx ? 'rotate-180 text-[#1A8754]' : ''}`} />
               </button>
-              {openFaq === idx && (
-                <div className="px-6 pb-6 text-gray-600 text-sm sm:text-base leading-relaxed border-t border-black/5 pt-4">
-                  {faq.a}
-                </div>
-              )}
-            </div>
+              <AnimatePresence>
+                {openFaq === idx && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    className="px-6 pb-6 text-gray-600 text-sm sm:text-base leading-relaxed border-t border-black/5 pt-4 overflow-hidden"
+                  >
+                    {faq.a}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -376,7 +516,12 @@ export default function App() {
       {/* BOOK FINDER WIDGET */}
       <section id="finder" className="py-16 sm:py-20 bg-[#070B19] text-white px-4 sm:px-6">
         <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
-          <div>
+          <motion.div
+            initial={{ opacity: 0, x: -25 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+          >
             <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-bold">A Quick Way To Find A Book</span>
             <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif mt-2 mb-4">Start with a book you have in mind.</h2>
             <p className="text-gray-300 text-sm leading-relaxed mb-6">
@@ -385,9 +530,15 @@ export default function App() {
             <p className="text-xs text-gray-400">
               * Searches go directly to Amazon or Goodreads. This page does not collect or copy catalog results.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white/5 p-6 sm:p-8 rounded-2xl border border-white/10">
+          <motion.div 
+            initial={{ opacity: 0, x: 25 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+            className="bg-white/5 p-6 sm:p-8 rounded-2xl border border-white/10 shadow-xl"
+          >
             <form onSubmit={handleBookSearch} className="space-y-6">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-2">Book title, author or ISBN</label>
@@ -397,7 +548,7 @@ export default function App() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="e.g. Atomic Habits or James Clear" 
-                    className="w-full px-4 py-3.5 rounded-xl bg-white text-gray-900 text-sm focus:outline-none"
+                    className="w-full px-4 py-3.5 rounded-xl bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
                     required
                   />
                 </div>
@@ -409,7 +560,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setSearchTarget('amazon')}
-                    className={`p-3 rounded-xl border text-left text-sm font-medium transition-all flex items-center justify-between ${searchTarget === 'amazon' ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-white' : 'border-white/10 text-gray-400'}`}
+                    className={`p-3 rounded-xl border text-left text-sm font-medium transition-all flex items-center justify-between cursor-pointer ${searchTarget === 'amazon' ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-white' : 'border-white/10 text-gray-400 hover:border-white/30'}`}
                   >
                     <span>Amazon Books</span>
                     <ExternalLink className="w-4 h-4 text-[#D4AF37]" />
@@ -417,7 +568,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setSearchTarget('goodreads')}
-                    className={`p-3 rounded-xl border text-left text-sm font-medium transition-all flex items-center justify-between ${searchTarget === 'goodreads' ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-white' : 'border-white/10 text-gray-400'}`}
+                    className={`p-3 rounded-xl border text-left text-sm font-medium transition-all flex items-center justify-between ${searchTarget === 'goodreads' ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-white' : 'border-white/10 text-gray-400 hover:border-white/30'}`}
                   >
                     <span>Goodreads</span>
                     <ExternalLink className="w-4 h-4 text-[#D4AF37]" />
@@ -425,22 +576,29 @@ export default function App() {
                 </div>
               </div>
 
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 type="submit" 
-                className="w-full py-4 rounded-xl bg-[#1A8754] text-white font-bold hover:bg-[#156d44] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-4 rounded-xl bg-[#1A8754] text-white font-bold hover:bg-[#156d44] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
               >
                 Search <Search className="w-4 h-4" />
-              </button>
+              </motion.button>
             </form>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* CONTACT / FORM SECTION (Professional AJAX State Handling) */}
+      {/* CONTACT / FORM SECTION */}
       <section id="contact" className="py-16 sm:py-24 bg-[#070B19] text-white border-t border-white/10 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 mb-16">
-            <div>
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 mb-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
+            >
               <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-bold">Your Book's Next Chapter</span>
               <h2 className="text-2xl sm:text-3xl font-serif mt-2 mb-4 sm:mb-6">Let's start with the real question.</h2>
               <p className="text-gray-300 text-sm leading-relaxed mb-6">
@@ -460,12 +618,22 @@ export default function App() {
                   lorenaclowerss1@gmail.com
                 </a>
               </div>
-            </div>
+            </motion.div>
 
             {/* Professional AJAX Form Box */}
-            <div className="bg-white/5 p-6 sm:p-8 rounded-2xl border border-white/10">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="bg-white/5 p-6 sm:p-8 rounded-2xl border border-white/10 shadow-2xl"
+            >
               {formStatus === 'success' ? (
-                <div className="py-12 text-center space-y-4">
+                <motion.div 
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="py-12 text-center space-y-4"
+                >
                   <div className="w-16 h-16 bg-[#1A8754]/20 text-[#1A8754] rounded-full flex items-center justify-center mx-auto border border-[#1A8754]/30">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
@@ -479,7 +647,7 @@ export default function App() {
                   >
                     Send another note
                   </button>
-                </div>
+                </motion.div>
               ) : (
                 <form onSubmit={handleFormSubmit} className="space-y-6">
                   {formStatus === 'error' && (
@@ -550,10 +718,12 @@ export default function App() {
                     />
                   </div>
 
-                  <button 
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     type="submit" 
                     disabled={formStatus === 'submitting'}
-                    className="w-full py-4 rounded-xl bg-[#1A8754] text-white font-bold hover:bg-[#156d44] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="w-full py-4 rounded-xl bg-[#1A8754] text-white font-bold hover:bg-[#156d44] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-md"
                   >
                     {formStatus === 'submitting' ? (
                       <>
@@ -564,10 +734,10 @@ export default function App() {
                         <Send className="w-4 h-4" /> Send your note
                       </>
                     )}
-                  </button>
+                  </motion.button>
                 </form>
               )}
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
